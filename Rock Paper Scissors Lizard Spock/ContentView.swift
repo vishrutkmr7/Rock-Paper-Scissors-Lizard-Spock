@@ -144,7 +144,7 @@ struct ContentView: View {
                     GameMoveButton(move: GameMove(name: "CPU Score", symbol: "\(cpuScore).circle.fill", defeats: []), action: {}, clickable: false)
                     Spacer()
                 }
-//                Spacer()
+                
                 Text("CPU Chose:")
                     .largeTitle()
                 if let cpuMove = cpuMove {
