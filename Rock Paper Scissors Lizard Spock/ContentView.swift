@@ -38,6 +38,21 @@ struct GameMoveButton: View {
     }
 }
 
+struct LargeTitle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.largeTitle.bold())
+            .foregroundColor(.primary)
+            .padding()
+    }
+}
+
+extension View {
+    func largeTitle() -> some View {
+        self.modifier(LargeTitle())
+    }
+}
+
 struct ContentView: View {
     @State private var moves: [GameMove] = []
     @State private var userMove: GameMove?
@@ -108,7 +123,7 @@ struct ContentView: View {
         initializeMoves()
         userScore = 0
         cpuScore = 0
-        turnsLeft = 10
+        turnsLeft = 11
         resultMessage = "Make your move!"
         cpuMove = nil
         showAlert = false
@@ -121,15 +136,26 @@ struct ContentView: View {
             .ignoresSafeArea()
             
             VStack {
-                Spacer()
-                Text("CPU Chose: \(cpuMove?.name ?? "None")").padding()
+                HStack {
+                    Spacer()
+                    GameMoveButton(move: GameMove(name: "User Score", symbol: "\(userScore).circle.fill", defeats: []), action: {}, clickable: false)
+                    Spacer()
+                    Spacer()
+                    GameMoveButton(move: GameMove(name: "CPU Score", symbol: "\(cpuScore).circle.fill", defeats: []), action: {}, clickable: false)
+                    Spacer()
+                }
+//                Spacer()
+                Text("CPU Chose:")
+                    .largeTitle()
                 if let cpuMove = cpuMove {
                     GameMoveButton(move: cpuMove, action: {}, clickable: false)
                 } else {
                     GameMoveButton(move: GameMove(name: "None", symbol: "questionmark", defeats: []), action: {}, clickable: false)
                 }
                 Spacer()
-                Text(resultMessage).padding()
+                Text(resultMessage)
+                    .largeTitle()
+                Spacer()
                 HStack {
                     ForEach(Array(moves.prefix(3)), id: \.name) { move in
                         GameMoveButton(move: move) {
@@ -145,15 +171,6 @@ struct ContentView: View {
                     }
                 }
                 Spacer()
-                HStack {
-                    Text("User Score: \(userScore)")
-                        .foregroundColor(.red)
-                        .padding(.leading)
-                    Spacer()
-                    Text("CPU Score: \(cpuScore)")
-                        .foregroundColor(.red)
-                        .padding(.trailing)
-                }
             }
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Game Over"),
